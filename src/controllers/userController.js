@@ -125,8 +125,8 @@ const loginUser = async function (req, res) {
       
     },
     "books-management",
-    {expiresIn:"1m"})
-  res.setHeader("x-api-token", token);
+    {expiresIn:"30m"})
+  // res.setHeader("x-api-token", token);
   res.status(200).send({ status: true, message: 'Success', data: token });
   }
   catch(err){
