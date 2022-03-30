@@ -82,7 +82,7 @@ const updateReviews = async function(req, res){
         bookId=req.params.bookId
         reviewId=req.params.reviewId
 
-    if (!isValid2(data.rating)) {
+    if (!isValid2(data.title)) {
         res.status(400).send({ status: false, message: "Title can't be empty" });
         return;
     }
