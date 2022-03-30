@@ -117,8 +117,6 @@ const loginUser = async function (req, res) {
     });
 
 
-  //FIXME: exp:Math.floor(Date.now()/1000)+10*60*30 =========> Expiry TODO:
-
   let token = jwt.sign(
     {
       userId: isEmailPresent._id.toString(),

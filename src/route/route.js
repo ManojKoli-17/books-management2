@@ -11,14 +11,16 @@ const BookMiddleware=require("../middlewares/bookMiddleware")
 router.post("/register", userController.createUser);
 router.post("/login", userController.loginUser);
 
-router.post("/books", bookController.createBook);
+router.post("/books",BookMiddleware.mid1, bookController.createBook);
 router.get("/books", bookController.getBook);
 
 router.get("/books/:bookId", bookController.getBookByParams);
-router.put("/books/:bookId", bookController.updateBook);
-router.delete("/books/:bookId", bookController.deleteBook);
+router.put("/books/:bookId",BookMiddleware.mid1, bookController.updateBook);
+router.delete("/books/:bookId",BookMiddleware.mid1, bookController.deleteBook);
 
 router.post("/books/:bookId/review",reviewsController.createReviews);
+router.put("/books/:bookId/review/:reviewId",reviewsController.updateReviews);
+router.delete("/books/:bookId/review/:reviewId",reviewsController.deleteReviews);
 
 
 

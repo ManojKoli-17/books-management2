@@ -14,9 +14,9 @@ const mid1 = async function (req, res, next) {
     //Authorization
     var decodedToken = jwt.verify(token, "books-management");
 
+    req.user = decodedToken.userId;
     next();
 
-    req.user = decodedToken.userId;
 
     // console.log(req.user)
 

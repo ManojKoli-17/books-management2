@@ -72,6 +72,19 @@ const createBook = async function (req, res) {
         .status(400)
         .send({ status: false, message: "please provide valid UserId" });
     }
+    if (!(/^\+?([1-9]{3})\)?[-. ]?([0-9]{10})$/.test(ISBN))) {
+      return res.status(400).send({ status: false, message: 'please provide valid ISBN' })
+    }
+
+    if(req.user != data.userId){
+      return res.status(400).send({status:false, message:"You are not authorized to Create this Book"})
+    }
+
+    data.subcategory=data.subcategory.filter(e=>e.trim())
+
+    if(data.subcategory.length==0){
+      return res.status(400).send({status:false, msg:"Subcategory can't be empty"})
+    }
     
 
     let isTitlePresent = await BookModel.findOne({ title: data.title });
@@ -90,7 +103,7 @@ const createBook = async function (req, res) {
     }
 
     let bookCreated = await BookModel.create(data);
-    res.status(201).send({ status: true, message: "Success", data: bookCreated });
+    res.status(201).send({ status: true, message: "Success", data: bookCreated});
   } catch (err) {
     res.status(500).send({ status: false, message: err.message });
   }
@@ -105,14 +118,15 @@ const getBook = async function (req, res) {
     if (subcategory != null) obj.subcategory = subcategory;
 
     obj.isDeleted = false;
-    if (!isValidReqBody(req.query)) {
-      res.status(400).send({
-        status: false,
-        message: "Please provide Books details in query",
-      });
-      return;
-    }
-    if (!/^[0-9a-fA-F]{24}$/.test(userId)) {
+    // if (!isValidReqBody(req.query)) {
+    //   res.status(400).send({
+    //     status: false,
+    //     message: "Please provide Books details in query",
+    //   });
+    //   return;
+    // }
+
+    if ((userId) && (!/^[0-9a-fA-F]{24}$/.test(userId))) {
       return res
         .status(400)
         .send({ status: false, message: "please provide valid UserId" });
@@ -128,7 +142,6 @@ const getBook = async function (req, res) {
       reviews: 1,
     });
 
-    //TODO: Sorting method for Array of objects:-  https://www.tutorialstonight.com/javascript-sort-array-of-objects.php#:~:text=%20To%20sort%20an%20array%20of%20objects%20in,order%20and%20then%20reverse%20the%20array%20More%20  TODO:
     bookData.sort(function (first, last) {
       return first.title.localeCompare(last.title);
     });
@@ -161,7 +174,6 @@ const getBookByParams = async function (req, res) {
 
 
     let reviewsData = await ReviewModel.find({ bookId: bookId, isDeleted:false });
-    // console.log(reviewsData.length)
 
     res.status(200).send({status: true, message: "Books List", data: {...isBookIdPresent.toObject(), reviews:reviewsData.length, reviewsData: reviewsData }});
 
@@ -203,11 +215,21 @@ const updateBook= async function(req, res){
       res.status(400).send({ status: false, message: "Released date can't be empty" });
       return;
     }
+    if (data.releasedAt && !(/^((?:19|20)[0-9][0-9])-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])/.test(data.releasedAt))) {
+      res.status(400).send({ status: false, message: "Plz provide valid released Date" })
+      return
+    }
+    if (data.ISBN && !(/^\+?([1-9]{3})\)?[-. ]?([0-9]{10})$/.test(ISBN))) {
+      return res.status(400).send({ status: false, message: 'please provide valid ISBN' })
+    }
 
     let isBookIdPresent = await BookModel.findOne({_id: bookId, isDeleted: false});
     if (!isBookIdPresent) { 
       res.status(404).send({ status: false, message: `Book data not found with this Id ${bookId}`});
       return;
+    }
+    if(req.user != isBookIdPresent.userId){
+      return res.status(400).send({status:false, message:"You are not authorized to update this Book"})
     }
 
     let isTitlePresent = await BookModel.findOne({ title: data.title });
@@ -243,8 +265,11 @@ const deleteBook = async function(req, res){
     if(!isBookPresent){
       return res.status(404).send({status:false, message:"Book not found"})
     }
+    if(req.user != isBookPresent.userId){
+      return res.status(400).send({status:false, message:"You are not authorized to Delete this Book"})
+    }
 
-    let bookData=await BookModel.findByIdAndDelete({_id:bookId},{isDeleted:true, deletedAt:new Date()})
+    let bookData=await BookModel.findByIdAndUpdate({_id:bookId},{isDeleted:true, deletedAt:new Date()})
     res.status(200).send({status:true, message:"Book Deleted successfully"})
 
   } catch (err) {
