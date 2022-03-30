@@ -56,8 +56,6 @@ if (!(/^(\+\d{1,3}[- ]?)?\d{10}$/.test(data.phone))) {
   return
 }
 
-//FIXME: (?=.[a-z])(?=.[A-Z])==> password validation for Upper case and Lower case FIXME:
-
 if (!(/^(?=.*\d)(?=(.*\W){1})(?=.*[a-zA-Z])(?!.*\s).{8,15}$/.test(data.password))) {
   res.status(400).send({ status: false, message: "Plz enter valid password" })
   return
@@ -124,7 +122,6 @@ const loginUser = async function (req, res) {
     },
     "books-management",
     {expiresIn:"30m"})
-  // res.setHeader("x-api-token", token);
   res.status(200).send({ status: true, message: 'Success', data: token });
   }
   catch(err){

@@ -12,9 +12,9 @@ router.post("/register", userController.createUser);
 router.post("/login", userController.loginUser);
 
 router.post("/books",BookMiddleware.mid1, bookController.createBook);
-router.get("/books", bookController.getBook);
+router.get("/books",BookMiddleware.mid1, bookController.getBook);
 
-router.get("/books/:bookId", bookController.getBookByParams);
+router.get("/books/:bookId",BookMiddleware.mid1,bookController.getBookByParams);
 router.put("/books/:bookId",BookMiddleware.mid1, bookController.updateBook);
 router.delete("/books/:bookId",BookMiddleware.mid1, bookController.deleteBook);
 

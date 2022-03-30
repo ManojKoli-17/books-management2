@@ -72,12 +72,12 @@ const createBook = async function (req, res) {
         .status(400)
         .send({ status: false, message: "please provide valid UserId" });
     }
-    if (!(/^\+?([1-9]{3})\)?[-. ]?([0-9]{10})$/.test(ISBN))) {
+    if (!(/^\+?([1-9]{3})\)?[-. ]?([0-9]{10})$/.test(data.ISBN))) {
       return res.status(400).send({ status: false, message: 'please provide valid ISBN' })
     }
 
     if(req.user != data.userId){
-      return res.status(400).send({status:false, message:"You are not authorized to Create this Book"})
+      return res.status(401).send({status:false, message:"You are not authorized to Create this Book"})
     }
 
     data.subcategory=data.subcategory.filter(e=>e.trim())
@@ -118,13 +118,6 @@ const getBook = async function (req, res) {
     if (subcategory != null) obj.subcategory = subcategory;
 
     obj.isDeleted = false;
-    // if (!isValidReqBody(req.query)) {
-    //   res.status(400).send({
-    //     status: false,
-    //     message: "Please provide Books details in query",
-    //   });
-    //   return;
-    // }
 
     if ((userId) && (!/^[0-9a-fA-F]{24}$/.test(userId))) {
       return res
@@ -229,7 +222,7 @@ const updateBook= async function(req, res){
       return;
     }
     if(req.user != isBookIdPresent.userId){
-      return res.status(400).send({status:false, message:"You are not authorized to update this Book"})
+      return res.status(401).send({status:false, message:"You are not authorized to update this Book"})
     }
 
     let isTitlePresent = await BookModel.findOne({ title: data.title });
@@ -266,7 +259,7 @@ const deleteBook = async function(req, res){
       return res.status(404).send({status:false, message:"Book not found"})
     }
     if(req.user != isBookPresent.userId){
-      return res.status(400).send({status:false, message:"You are not authorized to Delete this Book"})
+      return res.status(401).send({status:false, message:"You are not authorized to Delete this Book"})
     }
 
     let bookData=await BookModel.findByIdAndUpdate({_id:bookId},{isDeleted:true, deletedAt:new Date()})

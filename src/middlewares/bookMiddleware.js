@@ -9,16 +9,11 @@ const mid1 = async function (req, res, next) {
         .status(401)
         .send({ status: false, msg: "token must be present" });
     }
-
-    
-    //Authorization
+  //Authorization
     var decodedToken = jwt.verify(token, "books-management");
 
     req.user = decodedToken.userId;
     next();
-
-
-    // console.log(req.user)
 
 
   } catch (err) {

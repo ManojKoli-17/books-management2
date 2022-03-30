@@ -48,13 +48,16 @@ const createReviews = async function(req, res){
               .status(400)
               .send({ status: false, message: "please provide valid BookId" });
           }
-        
+          if (!(/^((?:19|20)[0-9][0-9])-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])/.test(data.reviewedAt))) {
+            res.status(400).send({ status: false, message: "Plz provide valid released Date" })
+            return
+          }        
         if(data.rating < 1 || data.rating > 5){
             return res
         .status(400)
         .send({ status: false, message: "Rating should be 1 to 5" });
         }
-        let paramsBookId=await BookModel.findOne({_id:bookId, isDeleted:false}).select({__v:0})
+        let paramsBookId=await BookModel.findOne({_id:bookId, isDeleted:false})
 
         let bodyBookId=await BookModel.findOneAndUpdate({_id:data.bookId, isDeleted:false},{ $inc: { reviews: + 1 } }, { new: true }).select({__v:0})
 
@@ -66,7 +69,7 @@ const createReviews = async function(req, res){
         }
 
         let reviewsData=await ReviewModel.create(data)
-        res.status(201).send({status:true, message:"Reviews data created successfully", data:{...paramsBookId.toObject(), reviewsData:reviewsData}})
+        res.status(201).send({status:true, message:"Reviews data created successfully", data:{...bodyBookId.toObject(), reviewsData:reviewsData}})
 
     } catch (err) {
         res.status(500).send({status:false, message:err.message})
@@ -144,7 +147,7 @@ const deleteReviews = async function(req, res){
               .status(400)
               .send({ status: false, message: "please provide valid ReviewId" });
         }
-        const isBookIdPresent=await BookModel.findOneAndUpdate({_id:bookId, isDeleted:false},{ $inc: { reviews: -1 } })
+        const isBookIdPresent=await BookModel.findOneAndUpdate({_id:bookId, isDeleted:false},{ $inc: { reviews: -1 }},{new:true})
 
         if(!isBookIdPresent){
             return res.status(404).send({status:false, message:"Book not found with this BookId"})
@@ -158,7 +161,7 @@ const deleteReviews = async function(req, res){
         if(isReviewIdPresent.bookId!=bookId){
             return res.status(404).send({status:false, message:"Reviews not found with this BookId and ReviewId that you provid"})
         }
-        const deletedReview=await ReviewModel.findByIdAndUpdate({_id:reviewId}, {isDeleted:true})
+        const deletedReview=await ReviewModel.findOneAndUpdate({_id:reviewId}, {isDeleted:true})
         res.status(200).send({status:true, message:"Review deleted successfully"})
 
     } catch (err) {
