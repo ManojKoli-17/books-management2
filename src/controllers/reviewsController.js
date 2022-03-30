@@ -56,7 +56,7 @@ const createReviews = async function(req, res){
         }
         let paramsBookId=await BookModel.findOne({_id:bookId, isDeleted:false}).select({__v:0})
 
-        let bodyBookId=await BookModel.findOne({_id:data.bookId, isDeleted:false}).select({__v:0})
+        let bodyBookId=await BookModel.findOneAndUpdate({_id:data.bookId, isDeleted:false},{ $inc: { reviews: + 1 } }, { new: true }).select({__v:0})
 
         if(bookId != data.bookId){
             return res.status(400).send({status:false, message:"Plz provide similar BookId's in param and body"})
@@ -144,7 +144,7 @@ const deleteReviews = async function(req, res){
               .status(400)
               .send({ status: false, message: "please provide valid ReviewId" });
         }
-        const isBookIdPresent=await BookModel.findOne({_id:bookId, isDeleted:false})
+        const isBookIdPresent=await BookModel.findOneAndUpdate({_id:bookId, isDeleted:false},{ $inc: { reviews: -1 } })
 
         if(!isBookIdPresent){
             return res.status(404).send({status:false, message:"Book not found with this BookId"})
