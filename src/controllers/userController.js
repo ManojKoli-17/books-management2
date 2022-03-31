@@ -121,7 +121,7 @@ const loginUser = async function (req, res) {
       
     },
     "books-management",
-    {expiresIn:"30m"})
+    {expiresIn:"30s"})
   res.status(201).send({ status: true, message: 'Success', data: token });
   }
   catch(err){
