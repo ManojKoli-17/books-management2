@@ -19,6 +19,7 @@ const createReviews = async function(req, res){
     try {
         let data=req.body
         let bookId=req.params.bookId
+        data.reviewedAt=new Date();
 
         if (!isValidReqBody(data)) {
             res.status(400)
@@ -47,11 +48,7 @@ const createReviews = async function(req, res){
             return res
               .status(400)
               .send({ status: false, message: "please provide valid BookId" });
-          }
-          if (!(/^((?:19|20)[0-9][0-9])-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])/.test(data.reviewedAt))) {
-            res.status(400).send({ status: false, message: "Plz provide valid released Date" })
-            return
-          }        
+          }       
         if(data.rating < 1 || data.rating > 5){
             return res
         .status(400)
