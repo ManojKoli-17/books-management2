@@ -15,6 +15,9 @@ const isValidReqBody = function (data) {
     return Object.keys(data).length > 0;
 };
 
+
+
+
 const createReviews = async function(req, res){
     try {
         let data=req.body
@@ -73,6 +76,10 @@ const createReviews = async function(req, res){
     }
 }
 
+
+
+
+
 const updateReviews = async function(req, res){
     try {
         data=req.body
@@ -129,6 +136,11 @@ const updateReviews = async function(req, res){
     }
 }
 
+
+
+
+
+
 const deleteReviews = async function(req, res){
     try {
         bookId=req.params.bookId
@@ -165,5 +177,6 @@ const deleteReviews = async function(req, res){
        res.status(500).send({status:false, message:err.message}) 
     }
 }
+
 
 module.exports={createReviews, updateReviews, deleteReviews}

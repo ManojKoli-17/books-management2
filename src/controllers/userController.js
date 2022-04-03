@@ -13,6 +13,8 @@ const isValidReqBody = function (data) {
 };
 
 
+
+
 let createUser = async function (req, res) {
   try {
     let data = req.body;
@@ -85,6 +87,8 @@ return   res.status(400).send({status:false,message:`${data.phone}, This Phone i
 };
 
 
+
+
 const loginUser = async function (req, res) {
   try{
     let data = req.body;
@@ -121,7 +125,8 @@ const loginUser = async function (req, res) {
       
     },
     "books-management",
-    {expiresIn:"30s"})
+    {expiresIn:"59m"})
+    res.setHeader("x-auth-token", token);
   res.status(201).send({ status: true, message: 'Success', data: token });
   }
   catch(err){

@@ -14,6 +14,7 @@ router.post("/login", userController.loginUser);
 router.post("/books",BookMiddleware.mid1, bookController.createBook);
 router.get("/books",BookMiddleware.mid1, bookController.getBook);
 
+
 router.get("/books/:bookId",BookMiddleware.mid1,bookController.getBookByParams);
 router.put("/books/:bookId",BookMiddleware.mid1, bookController.updateBook);
 router.delete("/books/:bookId",BookMiddleware.mid1, bookController.deleteBook);
@@ -21,6 +22,8 @@ router.delete("/books/:bookId",BookMiddleware.mid1, bookController.deleteBook);
 router.post("/books/:bookId/review",reviewsController.createReviews);
 router.put("/books/:bookId/review/:reviewId",reviewsController.updateReviews);
 router.delete("/books/:bookId/review/:reviewId",reviewsController.deleteReviews);
+
+router.post("/uploadFile", bookController.writeFile);
 
 
 

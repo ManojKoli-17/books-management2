@@ -6,11 +6,15 @@ const mid1 = async function (req, res, next) {
     const token = req.headers["x-api-key"];
     if (!token) {
       return res
-        .status(401)
-        .send({ status: false, msg: "token must be present" });
+        .status(404)
+        .send({ status: false, message: "token must be present" });
     }
   //Authorization
     var decodedToken = jwt.verify(token, "books-management");
+
+    if(!decodedToken){
+      res.status(400).send({status:false, message:"Invalid token"})
+    }
 
 
     req.user = decodedToken.userId;
@@ -18,7 +22,7 @@ const mid1 = async function (req, res, next) {
     next();
 
   } catch (err) {
-    res.status(401).send({ status: false, msg: err.message });
+    res.status(500).send({ status: false, message: err.message });
   }
 };
 
