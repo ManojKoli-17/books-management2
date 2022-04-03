@@ -56,6 +56,27 @@ let uploadFile = async (file) => {
 }
 
 
+const writeFile = async function (req, res) {
+  try {
+    let files = req.files
+    if (files && files.length > 0) {
+        //upload to s3 and get the uploaded link
+        // res.send the link back to frontend/postman
+        let uploadedFileURL = await uploadFile(files[0])
+        res.status(201).send({ msg: "file uploaded succesfully", data: uploadedFileURL })
+    }
+    else {
+        res.status(400).send({ msg: "No file found" })
+    }
+}
+catch (err) {
+    res.status(500).send({ msg: err })
+}
+}
+
+
+
+
 const createBook = async function (req, res) {
   try {
     let data = req.body;
@@ -142,17 +163,6 @@ const createBook = async function (req, res) {
       return res.status(400).send({ status: false, message: "ISBN is already exist" });
     }
 
-    // let files = req.files
-    //     if (files && files.length > 0) {
-
-    //         let uploadedFileURL = await uploadFile(files[0])
-    //         // res.status(201).send({ msg: "file uploaded succesfully", data: uploadedFileURL })
-    //         data.bookCover=uploadedFileURL
-    //     }
-    //     else {
-    //         res.status(400).send({ msg: "No file found" })
-    //         return 
-    //     }
 
     let bookCreated = await BookModel.create(data);
     res.status(201).send({ status: true, message: "Success", data: bookCreated});
@@ -160,25 +170,6 @@ const createBook = async function (req, res) {
     res.status(500).send({ status: false, message: err.message });
   }
 };
-
-
-const writeFile = async function (req, res) {
-  try {
-    let files = req.files
-    if (files && files.length > 0) {
-        //upload to s3 and get the uploaded link
-        // res.send the link back to frontend/postman
-        let uploadedFileURL = await uploadFile(files[0])
-        res.status(201).send({ msg: "file uploaded succesfully", data: uploadedFileURL })
-    }
-    else {
-        res.status(400).send({ msg: "No file found" })
-    }
-}
-catch (err) {
-    res.status(500).send({ msg: err })
-}
-}
 
 
 
